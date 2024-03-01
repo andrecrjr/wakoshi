@@ -10,9 +10,10 @@ export default NextAuth({
       token: "https://wakatime.com/oauth/token",
       authorization: {url:"https://wakatime.com/oauth/authorize", params:
       {
-        scope:"email,read_stats"
+        scope:"email,read_stats,read_summaries"
       }
     },
+    checks:["state"],
     userinfo: "https://wakatime.com/api/v1/users/current",
       profile(profile:{data:{id:string, email:string}}) {
         return {
