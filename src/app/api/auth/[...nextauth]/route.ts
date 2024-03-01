@@ -1,6 +1,6 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth/next"
 
-export default NextAuth({
+const handler = NextAuth({
   providers: [
     {
       id: "wakatime",
@@ -24,7 +24,16 @@ export default NextAuth({
       clientId: process.env.WAKATIME_CLIENT_ID,
       clientSecret: process.env.WAKATIME_CLIENT_SECRET
     },
-    ]
-  // Você pode adicionar outros callbacks ou opções aqui
-  // https://next-auth.js.org/configuration/options
-})
+    ], 
+    secret: process.env.NEXTAUTH_SECRET,
+    debug:true,
+    callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log('user', user, account, profile)
+      return true
+    },
+    }
+    }
+  )
+
+export { handler as GET, handler as POST}
