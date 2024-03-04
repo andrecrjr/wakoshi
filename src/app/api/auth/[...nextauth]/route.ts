@@ -1,4 +1,8 @@
+import { RootUserProfile, UserProfile } from "@/app/types/wakatimeAPI";
+import { tokenConverter } from "@/utils";
+import axios from "axios";
 import NextAuth from "next-auth/next"
+
 
 const handler = NextAuth({
   providers: [
@@ -6,30 +10,50 @@ const handler = NextAuth({
       id: "wakatime",
       name: "Wakatime",
       type: "oauth",
+      clientId: process.env.WAKATIME_CLIENT_ID,
+      clientSecret: process.env.WAKATIME_CLIENT_SECRET,
       version: "2.0",
-      token: "https://wakatime.com/oauth/token",
-      authorization: {url:"https://wakatime.com/oauth/authorize", params:
+      token: {url:"https://wakatime.com/oauth/token",
+      async request(context) {
+        const response = await axios.post(
+              "https://wakatime.com/oauth/token",
+              {...context.params, redirect_uri:context.provider.callbackUrl},
+            );
+            const tokenWaka = tokenConverter(response.data)
+          return {tokens:tokenWaka}
+       }, 
+      params:{
+        client_id:process.env.WAKATIME_CLIENT_ID,
+        client_secret:process.env.WAKATIME_CLIENT_SECRET,
+        grant_type:"authorization_code"
+      }},
+      authorization: {url:"https://wakatime.com/oauth/authorize?response_type=code", params:
       {
-        scope:"email,read_stats,read_summaries"
+        scope:"email,read_stats,read_summaries",
+        "grant_type":"authorization_code"
       }
     },
-    checks:["state"],
-    userinfo: "https://wakatime.com/api/v1/users/current",
-      profile(profile:{data:{id:string, email:string}}) {
-        return {
-          id: profile.data.id,
-          email: profile.data.email,
-        }
-      },
-      clientId: process.env.WAKATIME_CLIENT_ID,
-      clientSecret: process.env.WAKATIME_CLIENT_SECRET
+    userinfo: {
+      async request(context){
+        const response = await axios.get("https://wakatime.com/api/v1/users/current", {
+          headers: {Authorization: `Bearer ${context.tokens.access_token}`}
+        })
+        return response.data
+      }
     },
+    profile(profile) {
+      const data: UserProfile = profile.data
+      return data
+    },
+    accessTokenUrl: "https://wakatime.com/oauth/token",
+    },
+
     ], 
     secret: process.env.NEXTAUTH_SECRET,
-    debug:true,
+    debug:process.env.NODE_ENV !== "production",
     callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      console.log('user', user, account, profile)
+    async signIn(data) {
+      console.log('user',data)
       return true
     },
     }
