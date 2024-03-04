@@ -1,10 +1,11 @@
 import { RootUserProfile, UserProfile } from "@/app/types/wakatimeAPI";
 import { tokenConverter } from "@/utils";
 import axios from "axios";
+import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next"
 
 
-const handler = NextAuth({
+export const authOptions:NextAuthOptions = NextAuth({
   providers: [
     {
       id: "wakatime",
@@ -43,7 +44,16 @@ const handler = NextAuth({
     },
     profile(profile) {
       const data: UserProfile = profile.data
-      return data
+      console.log(data)
+      return {
+        id: data.id,
+        email: data.email,
+        fullname: data.full_name,
+        image: data.photo,
+        display_name: data.display_name,
+        bio: data.bio,
+        last_project:data.last_project        
+      }
     },
     accessTokenUrl: "https://wakatime.com/oauth/token",
     },
@@ -52,12 +62,21 @@ const handler = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     debug:process.env.NODE_ENV !== "production",
     callbacks: {
-    async signIn(data) {
-      console.log('user',data)
-      return true
+      async signIn() {
+        return true
+      },
+    async session({session, token, user}) {
+      console.log(user)
+      return session
     },
+    async jwt({ token, account, profile }) {
+      console.log(token)
+       return token;
+    },
+    },session:{
+      strategy: "jwt"
     }
     }
   )
 
-export { handler as GET, handler as POST}
+export { authOptions as GET, authOptions as POST}

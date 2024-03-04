@@ -1,22 +1,21 @@
 'use client'
 
-import { SessionProvider, signIn } from "next-auth/react";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import User from "./components/Auth/UserSession";
 
 export default function Home() {
 
-
+  const data = useSession()
+  console.log(data)
   return (
-    <SessionProvider>
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <User />
       <button onClick={(e)=>{
-          signIn("wakatime")
-        }}>
+        signIn("wakatime")
+      }}>
         Login Wakatime
       </button>
+          <p>{data.data?.user?.email}</p>
     </main>
-    </SessionProvider>
   );
 }

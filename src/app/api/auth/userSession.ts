@@ -1,9 +1,11 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
+import { authOptions } from "./[...nextauth]/route";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req:NextApiRequest, res:NextApiResponse) => {
-  const session = await getServerSession(req, res)
 
+export default async function Api(req:NextApiRequest, res:NextApiResponse){
+  const session = await getServerSession(req, res, authOptions)
   if (session) {
     res.send({
       content:
