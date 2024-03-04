@@ -1,7 +1,7 @@
 import { RootUserProfile, UserProfile } from "@/app/types/wakatimeAPI";
 import { tokenConverter } from "@/utils";
 import axios from "axios";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import NextAuth from "next-auth/next"
 
 
@@ -42,18 +42,10 @@ export const authOptions:NextAuthOptions = NextAuth({
         return response.data
       }
     },
+    idToken:false,
     profile(profile) {
       const data: UserProfile = profile.data
-      console.log(data)
-      return {
-        id: data.id,
-        email: data.email,
-        fullname: data.full_name,
-        image: data.photo,
-        display_name: data.display_name,
-        bio: data.bio,
-        last_project:data.last_project        
-      }
+      return data
     },
     accessTokenUrl: "https://wakatime.com/oauth/token",
     },
@@ -66,11 +58,15 @@ export const authOptions:NextAuthOptions = NextAuth({
         return true
       },
     async session({session, token, user}) {
-      console.log(user)
+       const userData = token.user;
+       console.log(token)
+        if(userData){
+            session.user = userData as UserProfile
+        }
       return session
     },
-    async jwt({ token, account, profile }) {
-      console.log(token)
+    async jwt({ token, account, user }) {
+        user && (token.user = user);
        return token;
     },
     },session:{
