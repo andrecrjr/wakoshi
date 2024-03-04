@@ -16,13 +16,12 @@ export const authOptions:NextAuthOptions = NextAuth({
       version: "2.0",
       token: {url:"https://wakatime.com/oauth/token",
       async request(context) {
-        const response = await axios.post(
-              "https://wakatime.com/oauth/token",
+        const response = await axios.post("https://wakatime.com/oauth/token",
               {...context.params, redirect_uri:context.provider.callbackUrl},
             );
             const tokenWaka = tokenConverter(response.data)
-          return {tokens:tokenWaka}
-       }, 
+        return {tokens:tokenWaka}
+      }, 
       params:{
         client_id:process.env.WAKATIME_CLIENT_ID,
         client_secret:process.env.WAKATIME_CLIENT_SECRET,
@@ -57,19 +56,23 @@ export const authOptions:NextAuthOptions = NextAuth({
       async signIn() {
         return true
       },
-    async session({session, token, user}) {
+      //jwt is the first callback tthats called when the session iss uodated
+      async jwt({ token, account, user }) {
+        // add user data only when updates the session (click in sign in on front-end)
+        user && (token.user = user);
+        console.log(user)
+       return Promise.resolve(token);
+     },
+      async session({session, token, user}) {
        const userData = token.user;
-       console.log(token)
+       //vberify if data that comes from jwt
         if(userData){
             session.user = userData as UserProfile
         }
       return session
     },
-    async jwt({ token, account, user }) {
-        user && (token.user = user);
-       return token;
     },
-    },session:{
+    session:{
       strategy: "jwt"
     }
     }
