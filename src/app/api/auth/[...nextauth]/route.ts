@@ -44,6 +44,7 @@ export const authOptions:NextAuthOptions = NextAuth({
     idToken:false,
     profile(profile) {
       const data: UserProfile = profile.data
+      console.log(data)
       return data
     },
     accessTokenUrl: "https://wakatime.com/oauth/token",
@@ -59,16 +60,16 @@ export const authOptions:NextAuthOptions = NextAuth({
       //jwt is the first callback tthats called when the session iss uodated
       async jwt({ token, account, user }) {
         // add user data only when updates the session (click in sign in on front-end)
-        user && (token.user = user);
+        //user && (token.user = user);
         console.log(user)
        return Promise.resolve(token);
      },
       async session({session, token, user}) {
-       const userData = token.user;
-       //vberify if data that comes from jwt
-        if(userData){
+       //const userData = token.user;
+       //verify if data that comes from jwt
+       /* if(userData){
             session.user = userData as UserProfile
-        }
+        }*/
       return session
     },
     },
