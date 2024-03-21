@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { useSession } from 'next-auth/react'
 
 export default async function User() {
-   const data = await getServerSession(authOptions)
+  const data = await getServerSession(authOptions)
   console.log(data)
   if(!!data)
     return (

@@ -1,8 +1,8 @@
-import { RootUserProfile, UserProfile } from "@/app/types/wakatimeAPI";
+import { RootUserProfile, UserProfile } from "@/types/wakatimeAPI";
 import { tokenConverter } from "@/utils";
 import axios from "axios";
 import { NextAuthOptions, User } from "next-auth";
-import WakatimeProvider from "next-auth-wakatime";
+import WakatimeProvider from "wakatime-next-auth";
 import NextAuth from "next-auth/next"
 
 

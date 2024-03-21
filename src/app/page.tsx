@@ -16,6 +16,7 @@ export default function Home() {
         Login Wakatime
       </button>}
           <p>{data.data?.user?.username}</p>
+          <p>{data.data?.user?.full_name}</p>
     </main>
   );
 }
