@@ -14,7 +14,7 @@
     "next-auth": "^4.24.6",
     "react": "^18",
     "react-dom": "^18",
-    "wakatime-next-auth": "^1.0.0"
+    "wakatime-next-auth": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",
