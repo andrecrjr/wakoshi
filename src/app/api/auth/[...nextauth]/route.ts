@@ -3,6 +3,9 @@ import WakatimeProvider, { UserWakatimeProfile } from "wakatime-next-auth";
 import NextAuth from "next-auth/next"
 import { accountTokenWakatimeType } from "@/types/next-auth";
 import axios from 'axios'
+import { AllHeartBeatData, IAllTimeDataUser, IHeartBeatData } from "@/types/wakatimeTypes";
+import { fetchHeartbeatsForNumberOfDays } from "@/app/services/Wakatime";
+import { calcularProdutividade } from "@/utils";
 
 
 export const authOptions:NextAuthOptions = NextAuth({
@@ -29,23 +32,21 @@ export const authOptions:NextAuthOptions = NextAuth({
        return Promise.resolve(token);
      },
       async session({session, token, user}) {
-       const userData = token.user  as UserWakatimeProfile;
-       const userToken = token.accountToken as accountTokenWakatimeType
-       const api = "https://api.wakatime.com/api/v1/users/current/"
+        // data from server side
+        const userData = token.user  as UserWakatimeProfile;
+        const userToken = token.accountToken as accountTokenWakatimeType
+        const api = "https://api.wakatime.com/api/v1/users/current/"
 
-       const {data:allTime} = await axios.get(`${api}all_time_since_today`, {headers:{
-        "Authorization":`Bearer ${userToken.access_token}`
-       }});
-       const {data:heatbeats} = await axios.get(`${api}heartbeats?date=2024-03-20`, {headers:{
-        "Authorization":`Bearer ${userToken.access_token}`
-       }});
-       console.log(allTime)
-       console.log(heatbeats.data)
-       //verify if data that comes from jwt
-        if(userData){
-            session.user = userData
-        }
-      return session
+        const {data:allTime} = await axios.get<IAllTimeDataUser>(`${api}all_time_since_today`, {headers:{
+          "Authorization":`Bearer ${userToken.access_token}`
+        }});
+        const heartbeats:IHeartBeatData[] = await fetchHeartbeatsForNumberOfDays(userToken.access_token)
+        console.log(calcularProdutividade(heartbeats), "linhas por hora")
+
+          if(userData){
+              session.user = {...userData, heartBeats:heartbeats, allTime:allTime}
+          }
+        return session
     },
     },
     session:{

@@ -1,4 +1,5 @@
 import { TokenSet } from "next-auth";
+import { IHeartBeatData } from "./types/wakatimeTypes";
 
 export const tokenConverter = (tokenString:string):TokenSet =>{
 
@@ -12,4 +13,19 @@ export const tokenConverter = (tokenString:string):TokenSet =>{
         tokenObject[key] = value;
     }
     return tokenObject
+}
+
+export function calcularProdutividade(dadosHeartbeat:IHeartBeatData[]) {
+  let totalLinhasEscritas = 0;
+  let tempoTotal = 0;
+
+  dadosHeartbeat.forEach(heartbeat => {
+    if (heartbeat.is_write) {
+      totalLinhasEscritas += heartbeat.line_additions;
+      tempoTotal += heartbeat.time;
+    }
+  });
+
+  const produtividade = totalLinhasEscritas / (tempoTotal / 3600); // Linhas por hora
+  return produtividade;
 }

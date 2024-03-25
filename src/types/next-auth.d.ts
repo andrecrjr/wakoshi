@@ -1,5 +1,6 @@
 import { DefaultSession } from "next-auth";
 import { UserWakatimeProfile} from "wakatime-next-auth";
+import { AllHeartBeatData, IAllTimeDataUser } from "./wakatimeTypes";
 
 export type accountTokenWakatimeType = {
       provider: 'wakatime',
@@ -11,11 +12,15 @@ export type accountTokenWakatimeType = {
       token_type: 'bearer',
       expires_at: number,
       scope: string
-    }
+}
+
+export interface UserWakoshiSessionData extends UserWakatimeProfile{
+  allTime?: IAllTimeDataUser,
+  heartBeats?: IHeartBeatData[] | []
+} 
 
 declare module "next-auth" {
   interface Session {
-    user?: UserWakatimeProfile & DefaultSession["user"];
-    account?: accountTokenWakatimeType
+    user?: UserWakoshiSessionData & DefaultSession["user"] ;
   }
 }
