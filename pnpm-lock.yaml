@@ -21,8 +21,8 @@ dependencies:
     specifier: ^18
     version: 18.2.0(react@18.2.0)
   wakatime-next-auth:
-    specifier: ^1.0.1
-    version: 1.0.1(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.0.2
+    version: 1.0.2(react-dom@18.2.0)(react@18.2.0)
 
 devDependencies:
   '@types/node':
@@ -3038,8 +3038,8 @@ packages:
     hasBin: true
     dev: false
 
-  /wakatime-next-auth@1.0.1(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-XSWWYbXtEaNmVpkBPStiZk/2B78KTCB7mjQvIQqx5kbz97JRsaiRol7cCfFKZIOove0UXjTi54iYd2Lwt2qDqw==}
+  /wakatime-next-auth@1.0.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-zb8CjFWPnqIE7UOZk+aznyzvZSvQoveBwfTFhsekTGPhw41BpY2AiAUDxEojsNU7jlDN1t6cZpN/4TkmMdgJxg==}
     dependencies:
       '@types/node': 20.11.30
       next: 14.1.4(react-dom@18.2.0)(react@18.2.0)
